@@ -1,0 +1,27 @@
+#!/usr/bin/env expect
+
+set timeout -1
+spawn python /opt/graphite/webapp/graphite/manage.py syncdb
+
+expect "Would you like to create one now" {
+    send "yes\r"
+
+    expect "Username *:" {
+        send "{{ ADMIN_USER }}\r"
+    }
+
+    expect "Email address:" {
+        send "{{ ADMIN_EMAIL }}\r"
+    }
+
+    expect "Password:" {
+        send "{{ ADMIN_PASSWORD }}\r"
+    }
+
+    expect "Password *:" {
+        send "{{ ADMIN_PASSWORD }}\r"
+    }
+
+    expect "Superuser created successfully"
+
+}
