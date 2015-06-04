@@ -75,6 +75,6 @@ RUN chmod a+x /usr/local/bin/start.sh
 
 # defaults
 EXPOSE 80:80 2003:2003 2003:2003/udp 8125:8125/udp
-VOLUME [ "/opt/graphite/storage", "/opt/statsd", "/var/log", "/var/log/supervisor"]
+VOLUME [ "/opt/graphite/storage", "/var/log/supervisor" ]
 
 CMD ["/usr/local/bin/start.sh"]
