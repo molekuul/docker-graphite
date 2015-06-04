@@ -14,13 +14,13 @@ RUN yum groupinstall -y 'Development Tools'
 RUN yum install -y zlib-devel python-devel libxslt-devel wget \
     libxml2-devel libyaml-devel libpng-devel libjpeg-devel python-pip \
     cython python-psycopg2 python-lxml nginx nodejs pycairo memcached supervisor \
-    expect net-tools
+    expect net-tools rrdtool-devel
 
 RUN mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled /etc/nginx/conf.d
 
-RUN pip install "django>1.4" "python-memcached" \
+RUN pip install "django<1.6" "python-memcached" \
                 "django-tagging>=0.3.1" "twisted<12" \
-                "txAMQP==0.6.2" "flup"
+                "txAMQP==0.6.2" "flup" "rrdtool"
 
 RUN pip install "https://github.com/graphite-project/ceres/tarball/master" \
                 carbon whisper graphite-web \
@@ -45,15 +45,17 @@ RUN mkdir -p /opt/statsd && cd /opt/statsd && \
 
 RUN pip install j2cli
 
+# RUN PYTHONPATH=/opt/graphite/webapp django-admin.py collectstatic --noinput --settings=graphite.settings
+
 ENV ADMIN_USER=admin ADMIN_PASSWORD=admin ADMIN_EMAIL=admin@example.net
 
 # logging support
 RUN mkdir -p /var/log/carbon /var/log/graphite /var/log/nginx
 
-ENV HOME /root
-ENV SECRET_KEY MY_SUPER_SECRET
+ENV DEBUG=0
+ENV SECRET_KEY=MY_SUPER_SECRET
+ENV LOG_RENDERING_PERFORMANCE=0 LOG_CACHE_PERFORMANCE=0 LOG_METRIC_ACCESS=0
 
-COPY configs/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 COPY configs/graphite/*.conf /opt/graphite/conf/
 
 # config nginx
@@ -72,6 +74,8 @@ COPY configs/scripts/django_admin_init.exp /etc/templates/django_admin_init.exp.
 # start.sh
 COPY configs/start.sh /usr/local/bin/start.sh
 RUN chmod a+x /usr/local/bin/start.sh
+
+COPY configs/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 
 # defaults
 EXPOSE 80:80 2003:2003 2003:2003/udp 8125:8125/udp
