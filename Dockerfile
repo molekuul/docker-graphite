@@ -7,7 +7,6 @@ RUN yum localinstall -y http://dl.iuscommunity.org/pub/ius/stable/CentOS/7/x86_6
 RUN yum localinstall -y http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm
 RUN yum install -y http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
 
-RUN yum install -y yum-plugin-replace
 RUN yum upgrade -y
 
 RUN yum groupinstall -y 'Development Tools'
